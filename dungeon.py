@@ -69,24 +69,33 @@ def create_enemy() -> Enemy:
     )
 
 
-def create_dungeon(map_layout: List[str]) -> List[Room]:
+def create_dungeon(map_layout: list[str]) -> list[Room]:
     """Создать подземелье по заданной карте
 
     Args:
         map_layout: Список типов комнат.
 
     Returns:
-        List: Список комнат подземелья.
+        list: Список комнат подземелья.
     """
     descriptions = load_json("rooms.json")["room_descriptions"]
-    dungeon: List[Room] = []
+
+    dungeon: list[Room] = []
 
     for room_type in map_layout:
+        enemy = create_enemy() if room_type == "E" else None
+
+        if enemy is None:
+            is_cleared = True
+        else:
+            is_cleared = False
+
         dungeon.append(
             Room(
                 room_type=room_type,
                 description=random.choice(descriptions),
-                enemy=create_enemy() if room_type == "E" else None,
+                enemy=enemy,
+                is_cleared=is_cleared,
             )
         )
 

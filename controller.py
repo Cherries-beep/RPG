@@ -1,16 +1,13 @@
-"""
-Контроллер игрового процесса. Отвечает за игровой цикл и действия игрока.
-"""
+"""Контроллер игрового процесса. Отвечает за игровой цикл и действия игрока"""
 
-from typing import List
-
+from combat import AutoBattle
 from entities import Player, Room
 
 
 class GameController:
     """Управлять игровым процессом"""
 
-    def __init__(self, player: Player, dungeon: List[Room]) -> None:
+    def __init__(self, player: Player, dungeon: list[Room]) -> None:
         """
         Инициализировать контроллер игры.
 
@@ -67,19 +64,20 @@ class GameController:
                 print("You have left the dungeon.")
                 break
 
-    def _get_available_actions(self, room: Room) -> List[str]:
-        """Получить список доступных действий
+    def _get_available_actions(self, room: Room) -> list[str]:
+        """
+        Определить список доступных действий для игрока в текущей комнате
 
         Args:
-            room: Текущая комната.
+            room: Текущая комната, в которой находится игрок
 
         Returns:
-            List: Список действий.
+            list[str]: Список доступных действий
         """
         if room.has_enemy():
             return ["attack"]
 
-        actions: List[str] = []
+        actions: list[str] = []
 
         if room.room_type != "Ex" and self.current_index < len(self.dungeon) - 1:
             actions.append("go_forward")
@@ -93,13 +91,22 @@ class GameController:
         return actions
 
     def _attack(self, room: Room) -> None:
-        """Убить противника в комнате.
+        """
+        Провести бой с противником в текущей комнате
 
         Args:
             room: Комната с противником.
         """
-        if room.enemy:
-            room.enemy.hp = 0
+        battle = AutoBattle(self.player, room.enemy)
+        battle.fight()
+
+        for entry in battle.log:
+            print(entry)
+
+        room.clear_if_enemy_dead()
+
+        if not self.player.is_alive():
+            self.is_running = False
 
     def _get_user_choice(self, max_choice: int) -> int:
         """Получить корректный ввод пользователя."""

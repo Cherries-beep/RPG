@@ -1,6 +1,7 @@
+from combat import AutoBattle
 from dungeon import create_dungeon, create_player
-from entities import Room
-from typing import List
+from entities import Enemy, Player, Room
+
 
 def test_create_player():
     player = create_player()
@@ -31,3 +32,13 @@ def test_enemy_created_in_enemy_room():
     assert room.room_type == "E"
     assert room.enemy is not None
     assert room.enemy.hp > 0
+
+
+def test_room_cleared_after_enemy_death(player: Player, enemy: Enemy):
+    room = Room(room_type="E", description="enemy room", enemy=enemy, is_cleared=False)
+    battle = AutoBattle(player, enemy)
+    battle.fight()
+
+    room.clear_if_enemy_dead()
+
+    assert room.is_cleared

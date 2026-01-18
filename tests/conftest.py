@@ -14,7 +14,7 @@ def simple_layout() -> list[str]:
 
 @pytest.fixture
 def dungeon(simple_layout: list[str]) -> list[Room]:
-    return create_dungeon(simple_layout)
+    return create_dungeon(map_layout=simple_layout)
 
 
 @pytest.fixture
@@ -46,9 +46,9 @@ def enemy() -> Enemy:
 def dungeon_with_enemy(enemy: Enemy) -> list[Room]:
     """Подземелье с врагом."""
     return [
-        Room("St", "start"),
-        Room("E", "enemy room", enemy=enemy),
-        Room("Ex", "exit"),
+        Room(room_type="St", description="start", is_cleared=True),
+        Room(room_type="E", description="enemy room", is_cleared=False, enemy=enemy),
+        Room(room_type="Ex", description="exit", is_cleared=True),
     ]
 
 
@@ -56,8 +56,8 @@ def dungeon_with_enemy(enemy: Enemy) -> list[Room]:
 def dungeon_with_exit() -> list[Room]:
     """Подземелье с выходом."""
     return [
-        Room("St", "start"),
-        Room("Ex", "exit"),
+        Room(room_type="St", description="start", is_cleared=True),
+        Room(room_type="Ex", description="exit", is_cleared=True),
     ]
 
 
